@@ -43,7 +43,7 @@ const StockChart: React.FC = () => {
         const newData = [...prevState.datasets[0].data, trade.p];
 
         // Keep only the last 30 points
-        if (newLabels.length > 30) {
+        if (newLabels.length > 100) {
           newLabels.shift();
           newData.shift();
         }
