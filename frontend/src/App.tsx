@@ -6,10 +6,7 @@ const App: React.FC = () => {
   return (
     <div className="container-fluid">
       <div className="row">
-        {/* Sidebar on the left */}
         <Sidebar />
-
-        {/* Main content on the right */}
         <div className="col-md-9 col-lg-10 p-4">
           <StockChart />
         </div>
