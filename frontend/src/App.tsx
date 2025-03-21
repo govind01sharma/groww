@@ -1,10 +1,19 @@
-import React from 'react';
-import StockChart from './components/StockChart';
+import React from "react";
+import StockChart from "./components/StockChart";
+import Sidebar from "./components/Sidebar";
 
 const App: React.FC = () => {
   return (
-    <div>
-      <StockChart />
+    <div className="container-fluid">
+      <div className="row">
+        {/* Sidebar on the left */}
+        <Sidebar />
+
+        {/* Main content on the right */}
+        <div className="col-md-9 col-lg-10 p-4">
+          <StockChart />
+        </div>
+      </div>
     </div>
   );
 };

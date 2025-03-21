@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js";
+import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Tooltip } from "chart.js";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
+// Register Chart.js components
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip);
 
 interface TradeMessage {
   type: "trade";
@@ -86,8 +88,8 @@ const StockChart: React.FC = () => {
   };
 
   return (
-    <div style={{ float: "right", textAlign: "right", marginRight: "20px", width: "50%" }}>
-      <h1>Stock Dashboard</h1>
+    <div style={{ marginRight: "20px", width: "50%" }}>
+      <h1>Dashboard</h1>
       <div>
         <label htmlFor="stock-select">Select Stock: </label>
         <select id="stock-select" value={selectedSymbol} onChange={handleSymbolChange}>
@@ -105,6 +107,20 @@ const StockChart: React.FC = () => {
           options={{
             responsive: true,
             maintainAspectRatio: false,
+            plugins: {
+              tooltip: {
+                enabled: true,
+                mode: 'nearest', // Show the nearest point
+                intersect: true, // Tooltip appears only when hovering directly over a point
+                callbacks: {
+                  label: (context) => {
+                    const label = context.dataset.label || '';
+                    const value = context.raw as number;
+                    return `${label}: $${value.toFixed(2)}`;
+                  }
+                }
+              }
+            }
           }}
         />
       </div>
