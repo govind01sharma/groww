@@ -4,7 +4,6 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-// Register Chart.js components
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip);
 
 interface TradeMessage {
@@ -45,7 +44,6 @@ const StockChart: React.FC = () => {
         const newLabels = [...prevState.labels, new Date(trade.t).toLocaleTimeString()];
         const newData = [...prevState.datasets[0].data, trade.p];
 
-        // Keep only the last 30 points
         if (newLabels.length > 100) {
           newLabels.shift();
           newData.shift();
@@ -65,11 +63,9 @@ const StockChart: React.FC = () => {
   }, [lastJsonMessage]);
 
   useEffect(() => {
-    // Unsubscribe from the previous symbol and subscribe to the new one
     sendJsonMessage({ type: "unsubscribe", symbol: selectedSymbol });
     sendJsonMessage({ type: "subscribe", symbol: selectedSymbol });
 
-    // Reset chart data when the symbol changes
     setChartData({
       labels: [],
       datasets: [
@@ -101,7 +97,7 @@ const StockChart: React.FC = () => {
           <option value="META">META</option>
         </select>
       </div>
-      <div style={{ width: "800px", height: "400px" }}>
+      <div style={{ width: "1000px", height: "400px" }}>
         <Line
           data={chartData}
           options={{
@@ -110,8 +106,8 @@ const StockChart: React.FC = () => {
             plugins: {
               tooltip: {
                 enabled: true,
-                mode: 'nearest', // Show the nearest point
-                intersect: true, // Tooltip appears only when hovering directly over a point
+                mode: 'nearest',
+                intersect: true, 
                 callbacks: {
                   label: (context) => {
                     const label = context.dataset.label || '';
