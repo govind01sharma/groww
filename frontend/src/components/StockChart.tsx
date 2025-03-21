@@ -23,14 +23,15 @@ const StockChart: React.FC = () => {
     ],
   });
 
+  const [selectedSymbol, setSelectedSymbol] = useState("META");
+
   const FINNHUB_API_KEY = "cvdtp6hr01qm9khn8ut0cvdtp6hr01qm9khn8utg";
-  const SYMBOL = "GOOG";
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket<TradeMessage>(
     `wss://ws.finnhub.io?token=${FINNHUB_API_KEY}`,
     {
-      onOpen: () => sendJsonMessage({ type: "subscribe", symbol: SYMBOL }),
-      onClose: () => sendJsonMessage({ type: "unsubscribe", symbol: SYMBOL }),
+      onOpen: () => sendJsonMessage({ type: "subscribe", symbol: selectedSymbol }),
+      onClose: () => sendJsonMessage({ type: "unsubscribe", symbol: selectedSymbol }),
       shouldReconnect: () => true,
     }
   );
@@ -61,9 +62,43 @@ const StockChart: React.FC = () => {
     }
   }, [lastJsonMessage]);
 
+  useEffect(() => {
+    // Unsubscribe from the previous symbol and subscribe to the new one
+    sendJsonMessage({ type: "unsubscribe", symbol: selectedSymbol });
+    sendJsonMessage({ type: "subscribe", symbol: selectedSymbol });
+
+    // Reset chart data when the symbol changes
+    setChartData({
+      labels: [],
+      datasets: [
+        {
+          label: "Stock Price",
+          data: [],
+          borderColor: "#42A5F5",
+          backgroundColor: "#90CAF9",
+        },
+      ],
+    });
+  }, [selectedSymbol]);
+
+  const handleSymbolChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSymbol(event.target.value);
+  };
+
   return (
-    <div>
+    <div style={{ float: "right", textAlign: "right", marginRight: "20px", width: "50%" }}>
       <h1>Stock Dashboard</h1>
+      <div>
+        <label htmlFor="stock-select">Select Stock: </label>
+        <select id="stock-select" value={selectedSymbol} onChange={handleSymbolChange}>
+          <option value="GOOG">GOOG</option>
+          <option value="AAPL">AAPL</option>
+          <option value="MSFT">MSFT</option>
+          <option value="AMZN">AMZN</option>
+          <option value="TSLA">TSLA</option>
+          <option value="META">META</option>
+        </select>
+      </div>
       <div style={{ width: "800px", height: "400px" }}>
         <Line
           data={chartData}
